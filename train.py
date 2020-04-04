@@ -1,9 +1,13 @@
 import argparse
+import os
 
 import torch.multiprocessing as mp
 
 from model import A3CModel
 from worker import worker
+
+if not os.path.exists('logs'):
+    os.makedirs('logs')
 
 if __name__ == "__main__":
     # Set method to spawn to use CUDA

@@ -12,7 +12,7 @@ from utils import _sync_model, _collect_episode, _calculate_loss, _copy_gradient
 
 def worker(idx, shared_model, args):
     writer = SummaryWriter('tensorboard/worker:{:02}-{}'.format(idx, datetime.now().strftime("%d:%m::%H:%M")))
-    logging.basicConfig(filename='worker:{:02}.log'.format(idx),
+    logging.basicConfig(filename='logs/worker:{:02}.log'.format(idx),
                         filemode='w',
                         format='%(message)s',
                         level=logging.DEBUG)

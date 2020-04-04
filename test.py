@@ -36,7 +36,7 @@ if __name__ == '__main__':
     mp.set_start_method("spawn", True)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--n_episodes', type=int, default=20, help='Number of training steps')
+    parser.add_argument('--n_episodes', type=int, default=20, help='Number of episodes to run')
     parser.add_argument("--n_workers", type=int, default=5, help='Number of training workers')
     parser.add_argument('--load_model', default=None, help='File to load the model')
     args = parser.parse_args()
