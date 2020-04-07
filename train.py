@@ -32,7 +32,8 @@ if __name__ == "__main__":
     model.share_memory()
 
     # Create processes
-    processes = [mp.Process(target=worker, args=(i, model, args)) for i in range(args.n_workers)]
+    lock = mp.Lock()
+    processes = [mp.Process(target=worker, args=(i, model, args, lock)) for i in range(args.n_workers)]
 
     # Start processes
     [p.start() for p in processes]

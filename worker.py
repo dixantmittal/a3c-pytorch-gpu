@@ -3,6 +3,7 @@ from copy import deepcopy
 from datetime import datetime
 
 import torch
+import torch.multiprocessing as mp
 from tensorboardX import SummaryWriter
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
@@ -10,7 +11,10 @@ from tqdm import tqdm
 from utils import _sync_model, _collect_episode, _calculate_loss, _copy_gradients
 
 
-def worker(idx, shared_model, args):
+def worker(idx, shared_model, args, lock=None):
+    if lock is None:
+        lock = mp.Lock()
+
     writer = SummaryWriter('tensorboard/worker:{:02}-{}'.format(idx, datetime.now().strftime("%d:%m::%H:%M")))
     logging.basicConfig(filename='logs/worker:{:02}.log'.format(idx),
                         filemode='w',
@@ -52,11 +56,17 @@ def worker(idx, shared_model, args):
         # Clip gradients
         clip_grad_norm_(model.parameters(), args.max_grad_norm)
 
+        # ---- Critical Section Begins ----
+        lock.acquire()
+
         # Copy the gradients to shared model
         _copy_gradients(shared_model, model)
 
         # Take an optimisation step
         optimiser.step()
+
+        lock.release()
+        # ---- Critical Section Ends ----
 
         # Remove the gradients from local model
         model.zero_grad()
