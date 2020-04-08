@@ -8,7 +8,8 @@ from simulator import _get_simulator, _state_to_tensor
 # Copy gradients from source to target's parameters
 def _copy_gradients(target, source):
     for shared_param, param in zip(target.parameters(), source.parameters()):
-        shared_param._grad = param.grad.clone().cpu()
+        if param.grad is not None:
+            shared_param._grad = param.grad.clone().cpu()
 
 
 def _calculate_loss(logits, critics, actions, rewards, args):
